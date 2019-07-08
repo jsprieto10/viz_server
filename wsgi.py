@@ -1,4 +1,3 @@
-from server_viz import app
+import server_viz
 
-if __name__ == "__main__":
-    app.run()
+

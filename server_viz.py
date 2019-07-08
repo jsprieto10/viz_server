@@ -68,6 +68,7 @@ def hello_world():
 def ods_comuna():
 
 		query = request.json
+		print(df)
 		df_fil=df[(df.rangoEdad.isin(query['edades'])) & (df.sexo.isin(query['sexos']))]
 
 		return Response(json.dumps(comuna_vs_ods(df_fil,query['numero'])),mimetype='application/json')
@@ -96,9 +97,10 @@ def pa(path):
 	return os.path.join(current, path)
 
 
-
-
-df=None
-if __name__ == "__main__":
+def main():
 	df = pd.read_pickle(pa('datos_filtrados.pkl'))
-	app.run(debug=True, port=5000, host='0.0.0.0')
+
+
+
+df = pd.read_pickle(pa('datos_filtrados.pkl'))
+app.run(debug=True, port=5000, host='0.0.0.0')
