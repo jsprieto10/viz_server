@@ -98,7 +98,6 @@ def pa(path):
 
 
 
-df=None
+df = pd.read_pickle('datos_filtrados.pkl')
 if __name__ == "__main__":
-	df = pd.read_pickle('datos_filtrados.pkl')
 	app.run(debug=True, port=5000, host='0.0.0.0')
