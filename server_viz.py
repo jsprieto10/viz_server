@@ -91,8 +91,14 @@ def sunburst_r():
 
 
 
+def pa(path):
+	current = os.path.dirname(os.path.abspath(__file__))
+	return os.path.join(current, path)
+
+
+
 
 df=None
 if __name__ == "__main__":
-	df = pd.read_pickle('datos_filtrados.pkl')
+	df = pd.read_pickle(pa('datos_filtrados.pkl'))
 	app.run(debug=True, port=5000, host='0.0.0.0')
