@@ -1,4 +1,4 @@
-import server_viz
+from server_viz import app
 
 if __name__ == "__main__":
-    server_viz.app.run()
+    app.run()
