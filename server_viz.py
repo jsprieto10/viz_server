@@ -97,10 +97,6 @@ def pa(path):
 	return os.path.join(current, path)
 
 
-def main():
-	df = pd.read_pickle(pa('datos_filtrados.pkl'))
-
-
 df = pd.read_pickle(pa('datos_filtrados.pkl'))
 if __name__ == "__main__":
 	app.run(debug=True, port=5000, host='0.0.0.0')
