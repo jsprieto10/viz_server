@@ -73,7 +73,13 @@ def todos_comuna(df,numero_ods=20):
 
         li.append(info_comuna)
             
-    return li
+    return 
+
+def sexos(df, ods):
+
+    groupped = df[df.ods==ods].groupby(['ods','sexo'],as_index=False).agg({"idPregunta": "count"})
+    return {"Hombres": int(groupped[groupped.sexo=='Hombre'].iloc[0,2]), "Mujeres": int(groupped[groupped.sexo=='Mujer'].iloc[0,2])}
+
 
 
 
@@ -81,6 +87,11 @@ def todos_comuna(df,numero_ods=20):
 def hello_world():
     return jsonify(request.json)
 
+@app.route('/sexos/<ods>',methods=['GET'])
+def sexos_path(ods):
+        a=sexos(df,ods)
+        print(a)
+        return Response(json.dumps(a),mimetype='application/json')
 
 @app.route('/odsComuna',methods=['POST'])
 def ods_comuna():
