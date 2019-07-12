@@ -58,6 +58,24 @@ def sunburst(df,numero_ods=40):
         
     return {"name":"ODS's", "children":li}
 
+    def todos_comuna(df,numero_ods=20):
+    li=list()
+    groupped = df.groupby(['comuna','ods'],as_index=False).agg({"idPregunta": "count"})
+    comunas = groupped.comuna.unique()
+    for comuna in comunas:
+        df_actual=groupped[groupped['comuna']==comuna]
+
+        info_comuna = {'id': "C"+comuna.split(')')[0],'comuna':comuna,'datos':{}}
+
+        for index, row in df_actual.iterrows():
+            info_comuna['datos'][row['ods']]=row['idPregunta']
+            
+
+        li.append(info_comuna)
+        
+    return li
+
+
 
 @app.route('/',methods=['POST'])
 def hello_world():
@@ -71,6 +89,16 @@ def ods_comuna():
 		df_fil=df[(df.rangoEdad.isin(query['edades'])) & (df.sexo.isin(query['sexos']))]
 
 		return Response(json.dumps(comuna_vs_ods(df_fil,query['numero'])),mimetype='application/json')
+
+
+@app.route('/odsComuna',methods=['POST'])
+def ods_comuna():
+
+        query = request.json
+        df_fil=df[(df.rangoEdad.isin(query['edades'])) & (df.sexo.isin(query['sexos']))]
+
+        return Response(json.dumps(todos_comuna(df_fil)),mimetype='application/json')
+
 
 @app.route('/histograma_ods',methods=['POST'])
 def histograma():
