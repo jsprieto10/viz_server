@@ -58,22 +58,22 @@ def sunburst(df,numero_ods=40):
         
     return {"name":"ODS's", "children":li}
 
-    def todos_comuna(df,numero_ods=20):
-        li=list()
-        groupped = df.groupby(['comuna','ods'],as_index=False).agg({"idPregunta": "count"})
-        comunas = groupped.comuna.unique()
-        for comuna in comunas:
-            df_actual=groupped[groupped['comuna']==comuna]
+def todos_comuna(df,numero_ods=20):
+    li=list()
+    groupped = df.groupby(['comuna','ods'],as_index=False).agg({"idPregunta": "count"})
+    comunas = groupped.comuna.unique()
+    for comuna in comunas:
+        df_actual=groupped[groupped['comuna']==comuna]
 
-            info_comuna = {'id': "C"+comuna.split(')')[0],'comuna':comuna,'datos':{}}
+        info_comuna = {'id': "C"+comuna.split(')')[0],'comuna':comuna,'datos':{}}
 
-            for index, row in df_actual.iterrows():
-                info_comuna['datos'][row['ods']]=row['idPregunta']
+        for index, row in df_actual.iterrows():
+            info_comuna['datos'][row['ods']]=row['idPregunta']
                 
 
-            li.append(info_comuna)
+        li.append(info_comuna)
             
-        return li
+    return li
 
 
 
@@ -92,7 +92,7 @@ def ods_comuna():
 
 
 @app.route('/todos_comunas_ods',methods=['POST'])
-def todos_comuna():
+def todos_comuna_ods():
 
         query = request.json
         df_fil=df[(df.rangoEdad.isin(query['edades'])) & (df.sexo.isin(query['sexos']))]
