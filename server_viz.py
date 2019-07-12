@@ -91,8 +91,8 @@ def ods_comuna():
 		return Response(json.dumps(comuna_vs_ods(df_fil,query['numero'])),mimetype='application/json')
 
 
-@app.route('/odsComuna',methods=['POST'])
-def ods_comuna():
+@app.route('/todos_comunas_ods',methods=['POST'])
+def todos_comuna():
 
         query = request.json
         df_fil=df[(df.rangoEdad.isin(query['edades'])) & (df.sexo.isin(query['sexos']))]
