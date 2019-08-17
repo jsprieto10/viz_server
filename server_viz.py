@@ -95,8 +95,7 @@ def hexa_mapa(df,n=3000):
 
 @app.route('/hexa/<n>', methods=['GET'])
 def hexa_end(n):
-
-    return Response(json.dumps(hexa_mapa(df,n)),mimetype='application/json')
+    return Response(json.dumps(hexa_mapa(df,int(n))),mimetype='application/json')
 
 
 
