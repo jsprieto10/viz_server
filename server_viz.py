@@ -28,14 +28,15 @@ def comuna_vs_ods(df,numero_ods=3):
         
     return li
 
-def histograma_ods(df):
+def histograma_ods(df,numero_ods=20):
     li=list()
     actual = df.groupby(['ods'],as_index=False).agg({"idPregunta": "count"})
     
     for index, row in actual.iterrows():
         li.append({'count':row['idPregunta'],'text':row['ods']})
     
-    return {'items':li}
+    data = sorted(li,key=lambda x: x['count'],reverse=True)
+    return {'items':data[:min(max(1,numero_ods),len(data))]}
 
 
 def sunburst(df,numero_ods=40):
@@ -133,7 +134,7 @@ def histograma():
 		query = request.json
 		df_fil=df[(df.rangoEdad.isin(query['edades'])) & (df.sexo.isin(query['sexos']))]
 
-		return Response(json.dumps(histograma_ods(df_fil)),mimetype='application/json')
+		return Response(json.dumps(histograma_ods(df_fil,query['numero'])),mimetype='application/json')
 
 
 @app.route('/sunburst',methods=['POST'])
