@@ -188,6 +188,16 @@ def stories(n):
     return Response(json.dumps(res),mimetype='application/json')
 
 
+@app.route('/porcentaje',methods=['POST'])
+def porcentaje():
+
+    query = request.json
+    df_fil=df[(df.rangoEdad.isin(query['edades'])) & (df.sexo.isin(query['sexos']))]
+
+    porcentaje=100*len(df_fil)/len(df)
+    return jsonify({'porcentaje':round(porcentaje,2)})
+
+
 
 def pa(path):
 	current = os.path.dirname(os.path.abspath(__file__))
