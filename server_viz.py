@@ -94,6 +94,25 @@ def hexa_mapa(df,n=3000):
         
     return res
 
+
+def answers(df, ods, n):
+
+    fil=list(df[df.ods==ods].sample(n, random_state=1)['respuesta'])
+    
+    return [{'respuesta': answer} for answer in fil]
+
+
+
+
+@app.route('/answers/<ods>/<n>',methods=['GET'])
+def answer_end(ods,n):
+    print(ods,n)
+    
+
+    return Response(json.dumps(answers(df,ods,int(n))),mimetype='application/json')
+
+
+
 @app.route('/hexa/<n>', methods=['GET'])
 def hexa_end(n):
     return Response(json.dumps(hexa_mapa(df,int(n))),mimetype='application/json')
