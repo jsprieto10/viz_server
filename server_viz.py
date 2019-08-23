@@ -4,8 +4,10 @@ import json
 import os
 import pandas as pd
 import sys
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 
 def comuna_vs_ods(df,numero_ods=3):
