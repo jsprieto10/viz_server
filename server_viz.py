@@ -164,6 +164,27 @@ def sunburst_r():
 
 		return Response(json.dumps(sunburst(df_fil,query['numero'])),mimetype='application/json')
 
+@app.route('/historias/<n>', methods=['GET'])
+def stories(n):
+    
+    res = []
+    
+    sample = df.dropna().sample(int(n))
+    
+    for index, row in sample.iterrows():
+        
+        persona={}
+        persona['sexo']=row['sexo']
+        persona['rangoEdad']=row['rangoEdad']
+        persona['comuna']=row['comuna']
+        persona['barrio']=row['barrio']
+        persona['pregunta']=row['pregunta']
+        persona['respuesta']=row['respuesta']
+        persona['fecha']=str(row['fechaCorta'])
+        res.append(persona)
+
+    return Response(json.dumps(res),mimetype='application/json')
+
 
 
 def pa(path):
