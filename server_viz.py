@@ -97,7 +97,7 @@ def hexa_mapa(df,n=3000):
 
 def answers(df, ods, n):
 
-    fil=list(df[df.ods==ods].sample(n, random_state=1)['respuesta'])
+    fil=list(df[df.ods==ods].sample(n)['respuesta'])
     
     return [{'respuesta': answer} for answer in fil]
 
