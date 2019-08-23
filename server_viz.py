@@ -108,9 +108,6 @@ def answers(df, ods, n):
 
 @app.route('/answers/<ods>/<n>',methods=['GET'])
 def answer_end(ods,n):
-    print(ods,n)
-    
-
     return Response(json.dumps(answers(df,ods,int(n))),mimetype='application/json')
 
 
@@ -170,8 +167,10 @@ def sunburst_r():
 def stories(n):
     
     res = []
+
+
     
-    sample = df.dropna().sample(int(n))
+    sample = df.dropna()[df.respuesta.str.len() < 140].sample(int(n))
 
     d={'ods_1': 'Fin de la pobreza',
      'ods_2': 'Hambre cero',
@@ -201,7 +200,7 @@ def stories(n):
         persona['pregunta']=row['pregunta']
         persona['respuesta']=row['respuesta']
         persona['fecha']=str(row['fechaCorta'])
-        persona['ods']=str(row['ods'])+" "+d[row['ods']]
+        persona['ods']=str(row['ods'])+": "+d[row['ods']]
         persona['meta']=str(row['meta'])
         res.append(persona)
 
