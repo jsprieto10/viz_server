@@ -172,7 +172,25 @@ def stories(n):
     res = []
     
     sample = df.dropna().sample(int(n))
-    
+
+    d={'ods_1': 'Fin de la pobreza',
+     'ods_2': 'Hambre cero',
+      'ods_3': 'Salud y bienestar',
+       'ods_4': 'Educación de calidad',
+        'ods_5': 'Igualdad de género',
+         'ods_6': 'Agua limpia y saneamiento',
+          'ods_7': 'Energía asequible y no contaminante',
+           'ods_8': 'Trabajo y crecimiento económico',
+            'ods_9': 'Industria, innovación e infraestructura',
+             'ods_10': 'Reducción de las desigualdades',
+              'ods_11': 'Ciudades y comunidades sostenible',
+               'ods_12': 'Producción y consumo responsables',
+                'ods_13': 'Acción por el clima',
+                 'ods_14': 'Vida submarina',
+                  'ods_15': 'Vida de ecosistemas terrestres',
+                   'ods_16': 'Paz, justicia e instituciones sólidas',
+                    'ods_17': 'Alianzas para lograr los objetivos'}
+
     for index, row in sample.iterrows():
         
         persona={}
@@ -183,6 +201,8 @@ def stories(n):
         persona['pregunta']=row['pregunta']
         persona['respuesta']=row['respuesta']
         persona['fecha']=str(row['fechaCorta'])
+        persona['ods']=str(row['ods'])+" "+d[row['ods']]
+        persona['meta']=str(row['meta'])
         res.append(persona)
 
     return Response(json.dumps(res),mimetype='application/json')
@@ -192,10 +212,10 @@ def stories(n):
 def porcentaje():
 
     query = request.json
-    df_fil=df[(df.rangoEdad.isin(query['edades'])) & (df.sexo.isin(query['sexos']))]
+    df_fil=df[(df.ods.isin(query['ods'])) & (df.rangoEdad.isin(query['edades'])) & (df.sexo.isin(query['sexos'])) & df.comuna.isin(query['comunas'])]
 
     porcentaje=100*len(df_fil)/len(df)
-    return jsonify({'porcentaje':round(porcentaje,2)})
+    return jsonify({'porcentaje':round(porcentaje,2 )})
 
 
 
