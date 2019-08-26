@@ -104,6 +104,10 @@ def answers(df, ods, n):
     return [{'respuesta': answer} for answer in fil]
 
 
+def filtrado(df,query):
+    return df[(df.rangoEdad.isin(query['edades'])) & (df.sexo.isin(query['sexos'])) & (df.idPregunta.isin(query['respuesta']))]
+
+
 
 
 @app.route('/answers/<ods>/<n>',methods=['GET'])
@@ -132,7 +136,7 @@ def sexos_path(ods):
 def ods_comuna():
 
 		query = request.json
-		df_fil=df[(df.rangoEdad.isin(query['edades'])) & (df.sexo.isin(query['sexos']))]
+		df_fil=filtrado(df,query)
 
 		return Response(json.dumps(comuna_vs_ods(df_fil,query['numero'])),mimetype='application/json')
 
@@ -141,7 +145,7 @@ def ods_comuna():
 def todos_comuna_ods():
 
         query = request.json
-        df_fil=df[(df.rangoEdad.isin(query['edades'])) & (df.sexo.isin(query['sexos']))]
+        df_fil=filtrado(df,query)
 
         return Response(json.dumps(todos_comuna(df_fil)),mimetype='application/json')
 
@@ -150,7 +154,7 @@ def todos_comuna_ods():
 def histograma():
 
 		query = request.json
-		df_fil=df[(df.rangoEdad.isin(query['edades'])) & (df.sexo.isin(query['sexos']))]
+		df_fil=filtrado(df,query)
 
 		return Response(json.dumps(histograma_ods(df_fil,query['numero'])),mimetype='application/json')
 
@@ -159,7 +163,7 @@ def histograma():
 def sunburst_r():
 
 		query = request.json
-		df_fil=df[(df.rangoEdad.isin(query['edades'])) & (df.sexo.isin(query['sexos']))]
+		df_fil=filtrado(df,query)
 
 		return Response(json.dumps(sunburst(df_fil,query['numero'])),mimetype='application/json')
 
@@ -173,22 +177,22 @@ def stories(n):
     sample = df.dropna()[df.respuesta.str.len() < 140].sample(int(n))
 
     d={'ods_1': 'Fin de la pobreza',
-     'ods_2': 'Hambre cero',
-      'ods_3': 'Salud y bienestar',
-       'ods_4': 'Educación de calidad',
+        'ods_2': 'Hambre cero',
+        'ods_3': 'Salud y bienestar',
+        'ods_4': 'Educación de calidad',
         'ods_5': 'Igualdad de género',
-         'ods_6': 'Agua limpia y saneamiento',
-          'ods_7': 'Energía asequible y no contaminante',
-           'ods_8': 'Trabajo y crecimiento económico',
-            'ods_9': 'Industria, innovación e infraestructura',
-             'ods_10': 'Reducción de las desigualdades',
-              'ods_11': 'Ciudades y comunidades sostenible',
-               'ods_12': 'Producción y consumo responsables',
-                'ods_13': 'Acción por el clima',
-                 'ods_14': 'Vida submarina',
-                  'ods_15': 'Vida de ecosistemas terrestres',
-                   'ods_16': 'Paz, justicia e instituciones sólidas',
-                    'ods_17': 'Alianzas para lograr los objetivos'}
+        'ods_6': 'Agua limpia y saneamiento',
+        'ods_7': 'Energía asequible y no contaminante',
+        'ods_8': 'Trabajo y crecimiento económico',
+        'ods_9': 'Industria, innovación e infraestructura',
+        'ods_10': 'Reducción de las desigualdades',
+        'ods_11': 'Ciudades y comunidades sostenible',
+        'ods_12': 'Producción y consumo responsables',
+        'ods_13': 'Acción por el clima',
+        'ods_14': 'Vida submarina',
+        'ods_15': 'Vida de ecosistemas terrestres',
+        'ods_16': 'Paz, justicia e instituciones sólidas',
+        'ods_17': 'Alianzas para lograr los objetivos'}
 
     for index, row in sample.iterrows():
         
@@ -211,7 +215,7 @@ def stories(n):
 def porcentaje():
 
     query = request.json
-    df_fil=df[(df.ods.isin(query['ods'])) & (df.rangoEdad.isin(query['edades'])) & (df.sexo.isin(query['sexos'])) & df.comuna.isin(query['comunas'])]
+    df_fil=filtrado(df,query)[(df.ods.isin(query['ods'])) & df.comuna.isin(query['comunas'])]
 
     porcentaje=100*len(df_fil)/len(df)
     return jsonify({'porcentaje':round(porcentaje,2 )})
@@ -221,7 +225,6 @@ def porcentaje():
 def pa(path):
 	current = os.path.dirname(os.path.abspath(__file__))
 	return os.path.join(current, path)
-
 
 
 
