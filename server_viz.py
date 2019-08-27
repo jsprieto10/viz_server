@@ -105,7 +105,18 @@ def answers(df, ods, n):
 
 
 def filtrado(df,query):
-    return df[(df.rangoEdad.isin(query['edades'])) & (df.sexo.isin(query['sexos'])) & (df.idPregunta.isin(query['respuesta']))]
+
+
+    lista={
+    'jovenes':['0 a 9','10 a 14', '15 a 19','20 a 24','25 a 29'],
+    'adultos':['30 a 34', '35 a 39', '40 a 44', '45 a 49', '50 a 54'],
+    'mayores':['55 a 59', '60 a 64', '65 a 69','70 a 74', '75 a 79', '80 o más']
+    }
+
+
+    edad = sum([lista[rango] for rango in query['edades']],[])
+
+    return df[(df.rangoEdad.isin(edad)) & (df.sexo.isin(query['sexos'])) & (df.idPregunta.isin(query['respuesta']))]
 
 
 
@@ -152,20 +163,18 @@ def todos_comuna_ods():
 
 @app.route('/histograma_ods',methods=['POST'])
 def histograma():
-
-		query = request.json
-		df_fil=filtrado(df,query)
-
-		return Response(json.dumps(histograma_ods(df_fil,query['numero'])),mimetype='application/json')
+    query = request.json
+    print("hola",query)
+    df_fil=filtrado(df,query)
+    
+    return Response(json.dumps(histograma_ods(df_fil,query['numero'])),mimetype='application/json')
 
 
 @app.route('/sunburst',methods=['POST'])
 def sunburst_r():
-
-		query = request.json
-		df_fil=filtrado(df,query)
-
-		return Response(json.dumps(sunburst(df_fil,query['numero'])),mimetype='application/json')
+    query = request.json
+    df_fil=filtrado(df,query)
+    return Response(json.dumps(sunburst(df_fil,query['numero'])),mimetype='application/json')
 
 @app.route('/historias/<n>', methods=['GET'])
 def stories(n):
