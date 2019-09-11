@@ -76,7 +76,7 @@ def todos_comuna(df,numero_ods=20):
 
         li.append(info_comuna)
             
-    return 
+    return li
 
 def sexos(df, ods):
     groupped = df[df.ods==ods].groupby(['ods','sexo'],as_index=False).agg({"idPregunta": "count"})
@@ -104,21 +104,20 @@ def answers(df, ods, n):
     return [{'respuesta': answer} for answer in fil]
 
 
-def filtrado(df,query):
+def filtrado(df2,query):
+	ods = query['ods'] if 'ods' in query else df2.ods.unique()
+	comunas = query['comunas'] if 'comunas' in query  else df2.comuna.unique()
+	metas = query['metas'] if 'metas' in query  else df2.meta.unique()
 
+	df = df2[(df2.ods.isin(ods)) & (df2.comuna.isin(comunas)) & (df2.meta.isin(metas))]
 
-    lista={
-    'jovenes':['0 a 9','10 a 14', '15 a 19','20 a 24','25 a 29'],
-    'adultos':['30 a 34', '35 a 39', '40 a 44', '45 a 49', '50 a 54'],
-    'mayores':['55 a 59', '60 a 64', '65 a 69','70 a 74', '75 a 79', '80 o más']
-    }
-
-
-    edad = sum([lista[rango] for rango in query['edades']],[])
-
-    return df[(df.rangoEdad.isin(edad)) & (df.sexo.isin(query['sexos'])) & (df.idPregunta.isin(query['respuesta']))]
-
-
+	lista={
+	'jovenes':['0 a 9','10 a 14', '15 a 19','20 a 24','25 a 29'],
+	'adultos':['30 a 34', '35 a 39', '40 a 44', '45 a 49', '50 a 54'],
+	'mayores':['55 a 59', '60 a 64', '65 a 69','70 a 74', '75 a 79', '80 o más']
+	}
+	edad = sum([lista[rango] for rango in query['edades']],[])
+	return df[(df.rangoEdad.isin(edad)) & (df.sexo.isin(query['sexos'])) & (df.idPregunta.isin(query['respuesta']))]
 
 
 @app.route('/answers/<ods>/<n>',methods=['GET'])
@@ -157,7 +156,7 @@ def todos_comuna_ods():
 
         query = request.json
         df_fil=filtrado(df,query)
-
+        print(query)
         return Response(json.dumps(todos_comuna(df_fil)),mimetype='application/json')
 
 
@@ -176,16 +175,15 @@ def sunburst_r():
     df_fil=filtrado(df,query)
     return Response(json.dumps(sunburst(df_fil,query['numero'])),mimetype='application/json')
 
-@app.route('/historias/<n>', methods=['GET'])
+@app.route('/historias/<n>', methods=['POST'])
 def stories(n):
-    
-    res = []
 
+	query = request.json
+	df_fil=filtrado(df,query)
+	res = []
 
-    
-    sample = df.dropna()[df.respuesta.str.len() < 140].sample(int(n))
-
-    d={'ods_1': 'Fin de la pobreza',
+	sample = df_fil.dropna()[df_fil.respuesta.str.len() < 140].sample(int(n))
+	d={'ods_1': 'Fin de la pobreza',
         'ods_2': 'Hambre cero',
         'ods_3': 'Salud y bienestar',
         'ods_4': 'Educación de calidad',
@@ -203,28 +201,27 @@ def stories(n):
         'ods_16': 'Paz, justicia e instituciones sólidas',
         'ods_17': 'Alianzas para lograr los objetivos'}
 
-    for index, row in sample.iterrows():
-        
-        persona={}
-        persona['sexo']=row['sexo']
-        persona['rangoEdad']=row['rangoEdad']
-        persona['comuna']=row['comuna']
-        persona['barrio']=row['barrio']
-        persona['pregunta']=row['pregunta']
-        persona['respuesta']=row['respuesta']
-        persona['fecha']=str(row['fechaCorta'])
-        persona['ods']=str(row['ods'])+": "+d[row['ods']]
-        persona['meta']=str(row['meta'])
-        res.append(persona)
+	for index, row in sample.iterrows():
+		persona={}
+		persona['sexo']=row['sexo']
+		persona['rangoEdad']=row['rangoEdad']
+		persona['comuna']=row['comuna']
+		persona['barrio']=row['barrio']
+		persona['pregunta']=row['pregunta']
+		persona['respuesta']=row['respuesta']
+		persona['fecha']=str(row['fechaCorta'])
+		persona['ods']=str(row['ods'])+": "+d[row['ods']]
+		persona['meta']=str(row['meta'])
+		res.append(persona)
 
-    return Response(json.dumps(res),mimetype='application/json')
+	return Response(json.dumps(res),mimetype='application/json')
 
 
 @app.route('/porcentaje',methods=['POST'])
 def porcentaje():
 
     query = request.json
-    df_fil=filtrado(df,query)[(df.ods.isin(query['ods'])) & df.comuna.isin(query['comunas'])]
+    df_fil=filtrado(df,query)
 
     porcentaje=100*len(df_fil)/len(df)
     return jsonify({'porcentaje':round(porcentaje,2 )})
