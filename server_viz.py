@@ -201,7 +201,7 @@ def stories(n):
 	df_fil=filtrado(df,query)[df.respuesta.notnull()]
 	res = []
 
-	sample = df_fil.sample(int(n))
+	sample = df_fil[df_fil.respuesta.str.len() < 140].sample(int(n))
 	d={'ods_1': 'Fin de la pobreza',
         'ods_2': 'Hambre cero',
         'ods_3': 'Salud y bienestar',
