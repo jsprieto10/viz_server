@@ -11,7 +11,7 @@ CORS(app)
 
 
 def comuna_vs_ods(df,numero_ods=3):
-    
+    li=list()
     groupped = df.groupby(['comuna','ods'],as_index=False).agg({"idPregunta": "count"})
     metas = df.groupby(['comuna','ods','meta'],as_index=False).agg({"idPregunta": "count"})
     comunas = groupped.comuna.unique()
@@ -34,7 +34,7 @@ def comuna_vs_ods(df,numero_ods=3):
                  'porcentaje':row['idPregunta']/total_ods,
                  'meta':{
                      'name':meta,
-                     'value':cuenta,
+                     'value':int(cuenta),
                      'porcentaje':cuenta/total_meta
                  }
                 }
