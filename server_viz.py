@@ -198,10 +198,10 @@ def sunburst_r():
 def stories(n):
 
 	query = request.json
-	df_fil=filtrado(df,query)
+	df_fil=filtrado(df,query)[df.respuesta.notnull()]
 	res = []
 
-	sample = df_fil.dropna()[df_fil.respuesta.str.len() < 140].sample(int(n))
+	sample = df_fil.sample(int(n))
 	d={'ods_1': 'Fin de la pobreza',
         'ods_2': 'Hambre cero',
         'ods_3': 'Salud y bienestar',
