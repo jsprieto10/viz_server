@@ -11,20 +11,39 @@ CORS(app)
 
 
 def comuna_vs_ods(df,numero_ods=3):
-    li=list()
+    
     groupped = df.groupby(['comuna','ods'],as_index=False).agg({"idPregunta": "count"})
+    metas = df.groupby(['comuna','ods','meta'],as_index=False).agg({"idPregunta": "count"})
     comunas = groupped.comuna.unique()
     for comuna in comunas:
+        
         df_actual=groupped[groupped['comuna']==comuna]
-
+        
+        total_ods = df_actual['idPregunta'].sum()
+        
         info_comuna = {'id': "C"+comuna.split(')')[0],'comuna':comuna,'datos':[]}
 
         for index, row in df_actual.iterrows():
-            info_comuna['datos'].append({'name':row['ods'], 'value':row['idPregunta']})
+            
+            fil=metas[(metas.comuna == comuna) & (metas.ods==row['ods'])]
+            total_meta = fil.idPregunta.sum()
+            meta,cuenta=fil.loc[fil['idPregunta'].idxmax()][-2:]
+            
+            d = {'name':row['ods'],
+                 'value':row['idPregunta'],
+                 'porcentaje':row['idPregunta']/total_ods,
+                 'meta':{
+                     'name':meta,
+                     'value':cuenta,
+                     'porcentaje':cuenta/total_meta
+                 }
+                }
+            
+            info_comuna['datos'].append(d)
             
         data = sorted(info_comuna['datos'],key=lambda x: x['value'],reverse=True)
         
-        info_comuna['datos']=data[:min(max(1,numero_ods),len(data))]
+        info_comuna['datos']=data[:min(numero_ods,len(data))]
 
         li.append(info_comuna)
         
