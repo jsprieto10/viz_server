@@ -198,10 +198,10 @@ def sunburst_r():
 def stories(n):
 
 	query = request.json
-	df_fil=filtrado(df,query)[df.respuesta.notnull()]
+	df_fil=filtrado(testimonios,query)[df.respuesta.notnull()]
 	res = []
 
-	sample = df_fil[df_fil.respuesta.str.len() < 140].sample(int(n))
+	sample = df_fil[df_fil['Testimonio'].str.len() < 140].sample(int(n))
 	d={'ods_1': 'Fin de la pobreza',
         'ods_2': 'Hambre cero',
         'ods_3': 'Salud y bienestar',
@@ -225,12 +225,9 @@ def stories(n):
 		persona['sexo']=row['sexo']
 		persona['rangoEdad']=row['rangoEdad']
 		persona['comuna']=row['comuna']
-		persona['barrio']=row['barrio']
-		persona['pregunta']=row['pregunta']
-		persona['respuesta']=row['respuesta']
-		persona['fecha']=str(row['fechaCorta'])
+		persona['pregunta']=row['idPregunta']
+		persona['respuesta']=row['Testimonio']
 		persona['ods']=str(row['ods'])+": "+d[row['ods']]
-		persona['meta']=str(row['meta'])
 		res.append(persona)
 
 	return Response(json.dumps(res),mimetype='application/json')
@@ -254,5 +251,6 @@ def pa(path):
 
 
 df = pd.read_pickle('datos_filtrados.pkl')
+testimonios = pd.read_pickle('testimonios.pkl')
 if __name__ == "__main__":
 	app.run(debug=True, port=8000, host='0.0.0.0')
